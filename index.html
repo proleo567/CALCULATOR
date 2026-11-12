@@ -1,1 +1,327 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Sales Calculator</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 25px 15px;
+    background: white;
+    color: #222;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 750px;
+    margin: 30px auto;
+}
+
+h1 { font-size: 28px; margin-bottom: 5px; }
+
+.subtitle {
+    color: #888;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.save-status {
+    color: #777;
+    font-size: 12px;
+    margin-bottom: 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 14px 10px;
+    color: #777;
+    font-size: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+td {
+    padding: 8px 5px;
+    border-bottom: 1px solid #eee;
+}
+
+input {
+    width: 100%;
+    padding: 13px 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    background: #fafafa;
+}
+
+input:focus {
+    border-color: #999;
+    background: white;
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 13px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.add {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.calculate {
+    background: #222;
+    color: white;
+}
+
+.delete {
+    background: none;
+    color: #999;
+    font-size: 19px;
+    padding: 8px;
+}
+
+.delete:hover { color: #e44; }
+
+.total-box {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-label {
+    color: #888;
+    font-size: 13px;
+}
+
+.total {
+    font-size: 27px;
+    font-weight: bold;
+}
+
+@media(max-width:450px) {
+    .container { margin-top: 15px; }
+    h1 { font-size: 24px; }
+    td { padding: 7px 3px; }
+    input { padding: 12px 7px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Daily Sales</h1>
+    <p class="subtitle">
+        Record items and calculate your total.
+    </p>
+
+    <div class="save-status" id="saveStatus">
+        Loading saved data...
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ITEM</th>
+                <th>PRICE (₱)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="itemList"></tbody>
+    </table>
+
+    <div class="controls">
+        <button class="add" onclick="addItem()">
+            + Add Item
+        </button>
+
+        <button class="calculate" onclick="calculateTotal()">
+            Calculate Total
+        </button>
+    </div>
+
+    <div class="total-box">
+        <div>
+            <div class="total-label">TOTAL AMOUNT</div>
+            <div class="total" id="total">₱0.00</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const itemList = document.getElementById("itemList");
+const STORAGE_KEY = "dailySalesData";
+
+function createRow(name = "", price = "") {
+    const row = document.createElement("tr");
+
+    const nameCell = document.createElement("td");
+    const priceCell = document.createElement("td");
+    const deleteCell = document.createElement("td");
+
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.placeholder = "Item name";
+    nameInput.value = name;
+
+    const priceInput = document.createElement("input");
+    priceInput.type = "number";
+    priceInput.className = "price";
+    priceInput.placeholder = "0.00";
+    priceInput.min = "0";
+    priceInput.step = "0.01";
+    priceInput.value = price;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete";
+    deleteButton.textContent = "×";
+    deleteButton.setAttribute("aria-label", "Remove item");
+    deleteButton.onclick = () => removeItem(row);
+
+    nameCell.appendChild(nameInput);
+    priceCell.appendChild(priceInput);
+    deleteCell.appendChild(deleteButton);
+
+    row.append(nameCell, priceCell, deleteCell);
+
+    return row;
+}
+
+function addItem() {
+    itemList.appendChild(createRow());
+    saveData();
+}
+
+function removeItem(row) {
+    row.remove();
+    saveData();
+    calculateTotal();
+}
+
+function saveData() {
+    const rows = itemList.querySelectorAll("tr");
+
+    const data = Array.from(rows).map(row => ({
+        name: row.cells[0].querySelector("input").value,
+        price: row.cells[1].querySelector("input").value
+    }));
+
+    try {
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(data)
+        );
+
+        document.getElementById("saveStatus").textContent =
+            "✓ All changes saved automatically";
+    } catch (error) {
+        document.getElementById("saveStatus").textContent =
+            "Unable to save. Check browser storage.";
+    }
+}
+
+function loadData() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (saved !== null) {
+            const data = JSON.parse(saved);
+
+            if (!Array.isArray(data)) {
+                throw new Error("Invalid saved data");
+            }
+
+            data.forEach(item => {
+                itemList.appendChild(
+                    createRow(item.name || "", item.price || "")
+                );
+            });
+
+        } else {
+            for (let i = 0; i < 3; i++) {
+                itemList.appendChild(createRow());
+            }
+        }
+
+        document.getElementById("saveStatus").textContent =
+            "✓ Saved data loaded";
+
+    } catch (error) {
+        itemList.replaceChildren();
+
+        for (let i = 0; i < 3; i++) {
+            itemList.appendChild(createRow());
+        }
+
+        document.getElementById("saveStatus").textContent =
+            "Could not load saved data. Starting fresh.";
+    }
+
+    calculateTotal();
+}
+
+function calculateTotal() {
+    const prices = document.querySelectorAll(".price");
+    let total = 0;
+
+    prices.forEach(input => {
+        const value = Number(input.value);
+
+        if (
+            input.value.trim() !== "" &&
+            Number.isFinite(value) &&
+            value > 0
+        ) {
+            total += value;
+        }
+    });
+
+    document.getElementById("total").textContent =
+        "₱" + total.toLocaleString("en-PH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+}
+
+// Automatically save whenever an input changes
+itemList.addEventListener("input", () => {
+    saveData();
+    calculateTotal();
+});
+
+// Load previous data when the website opens
+loadData();
+
+</script>
+
+</body>
+</html>
+
