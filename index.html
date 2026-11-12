@@ -4,36 +4,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Sales Calculator</title>
+<title>Daily Sales</title>
 
 <style>
+:root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --text: #222222;
+    --muted: #888888;
+    --border: #eeeeee;
+    --soft: #f6f6f6;
+    --accent: #222222;
+    --accent-text: #ffffff;
+}
+
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
-    padding: 25px 15px;
-    background: white;
-    color: #222;
+    padding: 22px 15px;
+    background: var(--bg);
+    color: var(--text);
     font-family: Arial, sans-serif;
+    transition: background .2s, color .2s;
 }
 
 .container {
-    max-width: 750px;
-    margin: 30px auto;
+    max-width: 850px;
+    margin: 15px auto;
 }
 
-h1 { font-size: 28px; margin-bottom: 5px; }
+header {
+    margin-bottom: 25px;
+}
+
+.brand {
+    font-size: 27px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
 
 .subtitle {
-    color: #888;
-    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    margin: 25px 0;
+}
+
+.nav-button {
+    background: var(--soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 14px 5px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.nav-button.active {
+    background: var(--accent);
+    color: var(--accent-text);
+    border-color: var(--accent);
+}
+
+.nav-button span {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 28px 0 20px;
+}
+
+.section-header h2 {
+    font-size: 22px;
+    margin: 0;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 12px 15px;
+}
+
+.primary {
+    background: var(--accent);
+    color: var(--accent-text);
+}
+
+.secondary {
+    background: var(--soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.danger {
+    background: #fff0f0;
+    color: #d33;
+}
+
+input {
+    width: 100%;
+    padding: 13px 10px;
+    background: var(--soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    outline: none;
     font-size: 14px;
 }
 
-.save-status {
-    color: #777;
-    font-size: 12px;
-    margin-bottom: 25px;
+input:focus {
+    border-color: var(--muted);
+    background: var(--surface);
 }
 
 table {
@@ -43,92 +138,291 @@ table {
 
 th {
     text-align: left;
-    padding: 14px 10px;
-    color: #777;
-    font-size: 12px;
-    border-bottom: 1px solid #eee;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border);
 }
 
 td {
-    padding: 8px 5px;
-    border-bottom: 1px solid #eee;
-}
-
-input {
-    width: 100%;
-    padding: 13px 10px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    outline: none;
-    font-size: 15px;
-    background: #fafafa;
-}
-
-input:focus {
-    border-color: #999;
-    background: white;
-}
-
-.controls {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-button {
-    padding: 13px 18px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.add {
-    background: #f1f1f1;
-    color: #333;
-}
-
-.calculate {
-    background: #222;
-    color: white;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--border);
 }
 
 .delete {
-    background: none;
-    color: #999;
-    font-size: 19px;
-    padding: 8px;
+    color: #d44;
+    background: transparent;
+    font-size: 20px;
+    padding: 7px;
 }
 
-.delete:hover { color: #e44; }
+.controls {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
 
 .total-box {
-    margin-top: 25px;
-    padding: 20px;
-    border: 1px solid #eee;
+    border: 1px solid var(--border);
     border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .total-label {
-    color: #888;
-    font-size: 13px;
+    color: var(--muted);
+    font-size: 12px;
 }
 
 .total {
-    font-size: 27px;
+    font-size: 28px;
     font-weight: bold;
+    margin-top: 5px;
 }
 
-@media(max-width:450px) {
-    .container { margin-top: 15px; }
-    h1 { font-size: 24px; }
-    td { padding: 7px 3px; }
-    input { padding: 12px 7px; }
+.save-status {
+    color: var(--muted);
+    font-size: 11px;
+    margin: 15px 0;
+}
+
+.hidden { display: none !important; }
+
+/* Custom calculator */
+
+.search {
+    margin: 15px 0;
+}
+
+.product-list {
+    max-height: 330px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 5px 12px;
+}
+
+.product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 2px;
+    border-bottom: 1px solid var(--border);
+}
+
+.product:last-child {
+    border-bottom: none;
+}
+
+.product-info {
+    min-width: 0;
+}
+
+.product-name {
+    font-weight: bold;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.product-price {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px 10px;
+    font-size: 13px;
+}
+
+/* Settings */
+
+.setting-card {
+    padding: 17px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 13px;
+}
+
+.setting-card h3 {
+    font-size: 15px;
+    margin: 0 0 12px;
+}
+
+.setting-card p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.color-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.color-choice {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid #cccccc;
+    padding: 0;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.setting-row input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+}
+
+/* Modals */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    z-index: 10;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.15);
+}
+
+.modal-content h2 {
+    margin: 0 0 18px;
+    font-size: 20px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 7px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.modal-actions button {
+    flex: 1;
+}
+
+.manager-list {
+    margin-top: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.manager-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.manager-item strong {
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.manager-item small {
+    display: block;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.manager-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.manager-actions button {
+    padding: 9px;
+}
+
+@media(max-width:480px) {
+    body { padding: 15px 12px; }
+    .brand { font-size: 24px; }
+    .section-header h2 { font-size: 19px; }
+    .nav-button { font-size: 11px; }
+    .total { font-size: 24px; }
+}
+
+body.compact td { padding: 4px 3px; }
+body.compact input { padding: 9px 7px; }
+body.dark {
+    --bg: #171717;
+    --surface: #222222;
+    --text: #f5f5f5;
+    --muted: #aaaaaa;
+    --border: #383838;
+    --soft: #292929;
+    --accent: #f5f5f5;
+    --accent-text: #222222;
+}
+body.lavender {
+    --bg: #f7f4fc;
+    --surface: #ffffff;
+    --text: #30283d;
+    --muted: #877c96;
+    --border: #e9e1f3;
+    --soft: #f0eaf8;
+    --accent: #73569a;
+    --accent-text: #ffffff;
+}
+body.green {
+    --bg: #f3f8f3;
+    --surface: #ffffff;
+    --text: #24352a;
+    --muted: #78877b;
+    --border: #dce9de;
+    --soft: #eaf3eb;
+    --accent: #427b50;
+    --accent-text: #ffffff;
+}
+body.pink {
+    --bg: #fff6f7;
+    --surface: #ffffff;
+    --text: #39272a;
+    --muted: #927b80;
+    --border: #f0dfe3;
+    --soft: #f9e9ed;
+    --accent: #b65d78;
+    --accent-text: #ffffff;
 }
 </style>
 </head>
@@ -137,13 +431,43 @@ button {
 
 <div class="container">
 
-    <h1>Daily Sales</h1>
-    <p class="subtitle">
-        Record items and calculate your total.
-    </p>
+<header>
+    <div class="brand">Daily Sales</div>
+    <div class="subtitle">Your simple business calculator</div>
+</header>
 
-    <div class="save-status" id="saveStatus">
-        Loading saved data...
+<!-- DASHBOARD -->
+
+<nav class="dashboard">
+    <button class="nav-button active" data-page="manual"
+        onclick="showPage('manual')">
+        <span>▤</span>Manual
+    </button>
+
+    <button class="nav-button" data-page="custom"
+        onclick="showPage('custom')">
+        <span>▦</span>Custom
+    </button>
+
+    <button class="nav-button" data-page="settings"
+        onclick="showPage('settings')">
+        <span>⚙</span>Settings
+    </button>
+</nav>
+
+<div class="save-status" id="saveStatus">
+    Loading saved data...
+</div>
+
+<!-- MANUAL CALCULATOR -->
+
+<section id="manualPage">
+
+    <div class="section-header">
+        <h2 id="manualTitle">Manual Calculating</h2>
+        <button class="secondary" onclick="renameSection('manual')">
+            ✎ Rename
+        </button>
     </div>
 
     <table>
@@ -154,15 +478,15 @@ button {
                 <th></th>
             </tr>
         </thead>
-        <tbody id="itemList"></tbody>
+        <tbody id="manualList"></tbody>
     </table>
 
     <div class="controls">
-        <button class="add" onclick="addItem()">
+        <button class="secondary" onclick="addManualItem()">
             + Add Item
         </button>
 
-        <button class="calculate" onclick="calculateTotal()">
+        <button class="primary" onclick="calculateTotal('manual')">
             Calculate Total
         </button>
     </div>
@@ -170,80 +494,232 @@ button {
     <div class="total-box">
         <div>
             <div class="total-label">TOTAL AMOUNT</div>
-            <div class="total" id="total">₱0.00</div>
+            <div class="total" id="manualTotal">₱0.00</div>
         </div>
     </div>
 
+</section>
+
+<!-- CUSTOM CALCULATOR -->
+
+<section id="customPage" class="hidden">
+
+    <div class="section-header">
+        <h2 id="customTitle">Custom Calculator</h2>
+
+        <button class="secondary" onclick="renameSection('custom')">
+            ✎ Rename
+        </button>
+    </div>
+
+    <div style="margin-bottom:20px">
+        <button class="secondary" onclick="openManager()">
+            ✎ Edit Items
+        </button>
+
+        <button class="primary" onclick="openPicker()">
+            + Add From Box
+        </button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ITEM</th>
+                <th>PRICE (₱)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="customList"></tbody>
+    </table>
+
+    <div class="controls">
+        <button class="secondary" onclick="addCustomManual()">
+            + Manual Item
+        </button>
+
+        <button class="primary" onclick="calculateTotal('custom')">
+            Calculate Total
+        </button>
+    </div>
+
+    <div class="total-box">
+        <div>
+            <div class="total-label">TOTAL AMOUNT</div>
+            <div class="total" id="customTotal">₱0.00</div>
+        </div>
+    </div>
+
+</section>
+
+<!-- SETTINGS -->
+
+<section id="settingsPage" class="hidden">
+
+    <div class="section-header">
+        <h2>Settings</h2>
+    </div>
+
+    <div class="setting-card">
+        <h3>Appearance</h3>
+        <p>Choose your preferred website color.</p>
+
+        <div class="color-options">
+            <button class="color-choice"
+                style="background:#ffffff"
+                onclick="setTheme('white')" aria-label="White theme"></button>
+
+            <button class="color-choice"
+                style="background:#222222"
+                onclick="setTheme('dark')" aria-label="Dark theme"></button>
+
+            <button class="color-choice"
+                style="background:#bda4dc"
+                onclick="setTheme('lavender')" aria-label="Lavender theme"></button>
+
+            <button class="color-choice"
+                style="background:#9bc8a2"
+                onclick="setTheme('green')" aria-label="Green theme"></button>
+
+            <button class="color-choice"
+                style="background:#e7a8b8"
+                onclick="setTheme('pink')" aria-label="Pink theme"></button>
+        </div>
+    </div>
+
+    <div class="setting-card">
+        <h3>Website preferences</h3>
+
+        <div class="setting-row">
+            <span>Compact layout</span>
+            <input type="checkbox" id="compactToggle"
+                onchange="setCompact(this.checked)">
+        </div>
+
+        <div class="setting-row">
+            <span>Automatic saving</span>
+            <strong style="color:#24945a;font-size:12px">
+                ON
+            </strong>
+        </div>
+    </div>
+
+    <div class="setting-card">
+        <h3>Data management</h3>
+        <p>Your data is saved in this browser on this device.</p>
+
+        <button class="secondary" onclick="exportData()">
+            ↓ Export Backup
+        </button>
+
+        <button class="danger" onclick="clearCurrent()">
+            Clear Current Calculator
+        </button>
+    </div>
+
+    <div class="setting-card">
+        <h3>About</h3>
+        <p>Daily Sales Version 2.0</p>
+        <p>Made to make daily sales recording easier.</p>
+    </div>
+
+</section>
+
+</div>
+
+<!-- ITEM MANAGER MODAL -->
+
+<div class="modal hidden" id="managerModal">
+    <div class="modal-content">
+
+        <h2>Edit Items</h2>
+
+        <div class="form-group">
+            <label>Item name</label>
+            <input id="productName" type="text"
+                placeholder="Example: Rice">
+        </div>
+
+        <div class="form-group">
+            <label>Price (₱)</label>
+            <input id="productPrice" type="number"
+                min="0" step="0.01" placeholder="0.00">
+        </div>
+
+        <div class="modal-actions">
+            <button class="primary" id="saveProductButton"
+                onclick="saveProduct()">
+                Add Item
+            </button>
+
+            <button class="secondary" onclick="closeManager()">
+                Close
+            </button>
+        </div>
+
+        <div class="manager-list" id="managerList"></div>
+
+    </div>
+</div>
+
+<!-- PRODUCT PICKER MODAL -->
+
+<div class="modal hidden" id="pickerModal">
+    <div class="modal-content">
+
+        <h2>Choose an Item</h2>
+
+        <input class="search" id="productSearch"
+            type="search" placeholder="Search items..."
+            oninput="renderPicker()">
+
+        <div class="product-list" id="pickerList"></div>
+
+        <div class="modal-actions">
+            <button class="secondary" onclick="closePicker()">
+                Close
+            </button>
+        </div>
+
+    </div>
 </div>
 
 <script>
-const itemList = document.getElementById("itemList");
-const STORAGE_KEY = "dailySalesData";
 
-function createRow(name = "", price = "") {
-    const row = document.createElement("tr");
+// ===============================
+// DATA AND SAVING
+// ===============================
 
-    const nameCell = document.createElement("td");
-    const priceCell = document.createElement("td");
-    const deleteCell = document.createElement("td");
+const STORAGE_KEY = "dailySalesVersion2";
 
-    const nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.placeholder = "Item name";
-    nameInput.value = name;
+let state = {
+    manual: [],
+    custom: [],
+    catalog: [],
+    sectionNames: {
+        manual: "Manual Calculating",
+        custom: "Custom Calculator"
+    },
+    theme: "white",
+    compact: false
+};
 
-    const priceInput = document.createElement("input");
-    priceInput.type = "number";
-    priceInput.className = "price";
-    priceInput.placeholder = "0.00";
-    priceInput.min = "0";
-    priceInput.step = "0.01";
-    priceInput.value = price;
+let editingProductId = null;
 
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "delete";
-    deleteButton.textContent = "×";
-    deleteButton.setAttribute("aria-label", "Remove item");
-    deleteButton.onclick = () => removeItem(row);
-
-    nameCell.appendChild(nameInput);
-    priceCell.appendChild(priceInput);
-    deleteCell.appendChild(deleteButton);
-
-    row.append(nameCell, priceCell, deleteCell);
-
-    return row;
-}
-
-function addItem() {
-    itemList.appendChild(createRow());
-    saveData();
-}
-
-function removeItem(row) {
-    row.remove();
-    saveData();
-    calculateTotal();
-}
+const $ = id => document.getElementById(id);
 
 function saveData() {
-    const rows = itemList.querySelectorAll("tr");
-
-    const data = Array.from(rows).map(row => ({
-        name: row.cells[0].querySelector("input").value,
-        price: row.cells[1].querySelector("input").value
-    }));
-
     try {
         localStorage.setItem(
             STORAGE_KEY,
-            JSON.stringify(data)
+            JSON.stringify(state)
         );
 
-        document.getElementById("saveStatus").textContent =
+        $("saveStatus").textContent =
             "✓ All changes saved automatically";
+
     } catch (error) {
-        document.getElementById("saveStatus").textContent =
+        $("saveStatus").textContent =
             "Unable to save. Check browser storage.";
     }
 }
@@ -252,51 +728,157 @@ function loadData() {
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
 
-        if (saved !== null) {
+        if (saved) {
             const data = JSON.parse(saved);
 
-            if (!Array.isArray(data)) {
+            if (!data || typeof data !== "object" ||
+                !Array.isArray(data.manual) ||
+                !Array.isArray(data.custom) ||
+                !Array.isArray(data.catalog)) {
                 throw new Error("Invalid saved data");
             }
 
-            data.forEach(item => {
-                itemList.appendChild(
-                    createRow(item.name || "", item.price || "")
-                );
-            });
-
-        } else {
-            for (let i = 0; i < 3; i++) {
-                itemList.appendChild(createRow());
-            }
+            state = {
+                ...state,
+                ...data,
+                sectionNames: {
+                    manual: "Manual Calculating",
+                    custom: "Custom Calculator",
+                    ...(data.sectionNames || {})
+                }
+            };
         }
-
-        document.getElementById("saveStatus").textContent =
-            "✓ Saved data loaded";
-
     } catch (error) {
-        itemList.replaceChildren();
-
-        for (let i = 0; i < 3; i++) {
-            itemList.appendChild(createRow());
-        }
-
-        document.getElementById("saveStatus").textContent =
-            "Could not load saved data. Starting fresh.";
+        $("saveStatus").textContent =
+            "Saved data could not be loaded.";
     }
 
-    calculateTotal();
+    applySettings();
+    renderAll();
 }
 
-function calculateTotal() {
-    const prices = document.querySelectorAll(".price");
+// ===============================
+// DASHBOARD
+// ===============================
+
+function showPage(page) {
+    ["manual", "custom", "settings"].forEach(name => {
+        $(name + "Page").classList.toggle(
+            "hidden", name !== page
+        );
+    });
+
+    document.querySelectorAll(".nav-button").forEach(button => {
+        button.classList.toggle(
+            "active", button.dataset.page === page
+        );
+    });
+}
+
+function renameSection(section) {
+    const current = state.sectionNames[section];
+
+    const newName = prompt("Enter a new section name:", current);
+
+    if (newName === null) return;
+
+    if (!newName.trim()) {
+        alert("Section name cannot be empty.");
+        return;
+    }
+
+    state.sectionNames[section] = newName.trim();
+
+    renderTitles();
+    saveData();
+}
+
+function renderTitles() {
+    $("manualTitle").textContent = state.sectionNames.manual;
+    $("customTitle").textContent = state.sectionNames.custom;
+}
+
+// ===============================
+// TABLE RENDERING
+// ===============================
+
+function renderTable(section) {
+    const list = $(section + "List");
+    list.replaceChildren();
+
+    state[section].forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        const priceCell = document.createElement("td");
+        const deleteCell = document.createElement("td");
+
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.placeholder = "Item name";
+        nameInput.value = item.name || "";
+
+        nameInput.addEventListener("input", () => {
+            state[section][index].name = nameInput.value;
+            saveData();
+        });
+
+        const priceInput = document.createElement("input");
+        priceInput.type = "number";
+        priceInput.min = "0";
+        priceInput.step = "0.01";
+        priceInput.placeholder = "0.00";
+        priceInput.value = item.price ?? "";
+
+        priceInput.addEventListener("input", () => {
+            state[section][index].price = priceInput.value;
+            calculateTotal(section);
+            saveData();
+        });
+
+        const remove = document.createElement("button");
+        remove.className = "delete";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", "Remove item");
+
+        remove.onclick = () => {
+            state[section].splice(index, 1);
+            renderTable(section);
+            calculateTotal(section);
+            saveData();
+        };
+
+        nameCell.appendChild(nameInput);
+        priceCell.appendChild(priceInput);
+        deleteCell.appendChild(remove);
+
+        row.append(nameCell, priceCell, deleteCell);
+        list.appendChild(row);
+    });
+
+    calculateTotal(section);
+}
+
+function addManualItem() {
+    state.manual.push({name: "", price: ""});
+    renderTable("manual");
+    saveData();
+}
+
+function addCustomManual() {
+    state.custom.push({name: "", price: ""});
+    renderTable("custom");
+    saveData();
+}
+
+function calculateTotal(section) {
     let total = 0;
 
-    prices.forEach(input => {
-        const value = Number(input.value);
+    state[section].forEach(item => {
+        const value = Number(item.price);
 
         if (
-            input.value.trim() !== "" &&
+            item.price !== "" &&
             Number.isFinite(value) &&
             value > 0
         ) {
@@ -304,24 +886,308 @@ function calculateTotal() {
         }
     });
 
-    document.getElementById("total").textContent =
+    $(section + "Total").textContent =
         "₱" + total.toLocaleString("en-PH", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
 }
 
-// Automatically save whenever an input changes
-itemList.addEventListener("input", () => {
-    saveData();
-    calculateTotal();
-});
+// ===============================
+// CUSTOM ITEM MANAGER
+// ===============================
 
-// Load previous data when the website opens
+function openManager() {
+    editingProductId = null;
+    $("productName").value = "";
+    $("productPrice").value = "";
+    $("saveProductButton").textContent = "Add Item";
+
+    renderManager();
+
+    $("managerModal").classList.remove("hidden");
+}
+
+function closeManager() {
+    $("managerModal").classList.add("hidden");
+}
+
+function saveProduct() {
+    const name = $("productName").value.trim();
+    const price = $("productPrice").value.trim();
+
+    if (!name) {
+        alert("Please enter an item name.");
+        return;
+    }
+
+    if (price === "" ||
+        !Number.isFinite(Number(price)) ||
+        Number(price) < 0) {
+        alert("Please enter a valid price.");
+        return;
+    }
+
+    if (editingProductId !== null) {
+        const product = state.catalog.find(
+            p => p.id === editingProductId
+        );
+
+        if (product) {
+            product.name = name;
+            product.price = price;
+        }
+    } else {
+        state.catalog.push({
+            id: Date.now().toString() +
+                Math.random().toString(36).slice(2),
+            name,
+            price
+        });
+    }
+
+    editingProductId = null;
+
+    $("productName").value = "";
+    $("productPrice").value = "";
+    $("saveProductButton").textContent = "Add Item";
+
+    renderManager();
+    renderPicker();
+    saveData();
+}
+
+function renderManager() {
+    const list = $("managerList");
+    list.replaceChildren();
+
+    if (state.catalog.length === 0) {
+        list.innerHTML =
+            '<div class="empty">No saved items yet. Add your first item above.</div>';
+        return;
+    }
+
+    state.catalog.forEach(product => {
+        const row = document.createElement("div");
+        row.className = "manager-item";
+
+        const info = document.createElement("div");
+        const name = document.createElement("strong");
+        const price = document.createElement("small");
+
+        name.textContent = product.name;
+        price.textContent = "₱" +
+            Number(product.price).toLocaleString("en-PH", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        info.append(name, price);
+
+        const actions = document.createElement("div");
+        actions.className = "manager-actions";
+
+        const edit = document.createElement("button");
+        edit.className = "secondary";
+        edit.textContent = "Edit";
+
+        edit.onclick = () => {
+            editingProductId = product.id;
+            $("productName").value = product.name;
+            $("productPrice").value = product.price;
+            $("saveProductButton").textContent = "Save Changes";
+            $("productName").focus();
+        };
+
+        const remove = document.createElement("button");
+        remove.className = "danger";
+        remove.textContent = "×";
+
+        remove.onclick = () => {
+            if (!confirm("Delete " + product.name + " from saved items?")) {
+                return;
+            }
+
+            state.catalog = state.catalog.filter(
+                p => p.id !== product.id
+            );
+
+            if (editingProductId === product.id) {
+                editingProductId = null;
+            }
+
+            renderManager();
+            renderPicker();
+            saveData();
+        };
+
+        actions.append(edit, remove);
+        row.append(info, actions);
+        list.appendChild(row);
+    });
+}
+
+// ===============================
+// PRODUCT PICKER
+// ===============================
+
+function openPicker() {
+    $("productSearch").value = "";
+    renderPicker();
+    $("pickerModal").classList.remove("hidden");
+}
+
+function closePicker() {
+    $("pickerModal").classList.add("hidden");
+}
+
+function renderPicker() {
+    const list = $("pickerList");
+    list.replaceChildren();
+
+    const query = $("productSearch").value
+        .trim().toLowerCase();
+
+    const products = state.catalog.filter(product =>
+        product.name.toLowerCase().includes(query)
+    );
+
+    if (products.length === 0) {
+        list.innerHTML =
+            '<div class="empty">No items found. Try another search or add an item in Edit Items.</div>';
+        return;
+    }
+
+    products.forEach(product => {
+        const row = document.createElement("div");
+        row.className = "product";
+
+        const info = document.createElement("div");
+        info.className = "product-info";
+
+        const name = document.createElement("div");
+        name.className = "product-name";
+        name.textContent = product.name;
+
+        const price = document.createElement("div");
+        price.className = "product-price";
+        price.textContent = "₱" +
+            Number(product.price).toLocaleString("en-PH", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        info.append(name, price);
+
+        const add = document.createElement("button");
+        add.className = "primary";
+        add.textContent = "+ Add";
+
+        add.onclick = () => {
+            state.custom.push({
+                name: product.name,
+                price: product.price
+            });
+
+            renderTable("custom");
+            saveData();
+            closePicker();
+        };
+
+        row.append(info, add);
+        list.appendChild(row);
+    });
+}
+
+// ===============================
+// SETTINGS
+// ===============================
+
+function setTheme(theme) {
+    const allowed = ["white", "dark", "lavender", "green", "pink"];
+
+    if (!allowed.includes(theme)) return;
+
+    state.theme = theme;
+    applySettings();
+    saveData();
+}
+
+function setCompact(enabled) {
+    state.compact = enabled;
+    applySettings();
+    saveData();
+}
+
+function applySettings() {
+    document.body.classList.remove(
+        "dark", "lavender", "green", "pink"
+    );
+
+    if (state.theme !== "white") {
+        document.body.classList.add(state.theme);
+    }
+
+    document.body.classList.toggle(
+        "compact", !!state.compact
+    );
+
+    $("compactToggle").checked = !!state.compact;
+}
+
+// ===============================
+// DATA MANAGEMENT
+// ===============================
+
+function clearCurrent() {
+    const currentPage = document.querySelector(
+        ".nav-button.active"
+    ).dataset.page;
+
+    if (currentPage === "settings") {
+        alert("Open a calculator section first.");
+        return;
+    }
+
+    if (!confirm("Clear all entries in this calculator?")) {
+        return;
+    }
+
+    state[currentPage] = [];
+
+    renderTable(currentPage);
+    saveData();
+}
+
+function exportData() {
+    const file = new Blob(
+        [JSON.stringify(state, null, 2)],
+        {type: "application/json"}
+    );
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "daily-sales-backup.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+// ===============================
+// INITIALIZE WEBSITE
+// ===============================
+
+function renderAll() {
+    renderTitles();
+    renderTable("manual");
+    renderTable("custom");
+}
+
 loadData();
 
 </script>
 
 </body>
 </html>
-
